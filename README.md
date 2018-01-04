@@ -1,4 +1,4 @@
-# pocketpy
+ # pocketpy
 The pyphone is a pyboard smart device
 It requires a pyboard with a lcd160cr
 
@@ -11,5 +11,5 @@ Apps are very simple to make:
 3) make a app.conf file (see app.conf)
 
 # app.conf
-{"name":"<your app name>","run":"<the file your app runs>","doloop":"<true/false true disables wait for USR button press after app is finished>"}
+{"name":"your app name","run":"the file your app runs","doloop":"<true/false true disables wait for USR button press after app is finished>"}
 
