@@ -12,4 +12,6 @@ Apps are very simple to make:
 
 # app.conf
 {"name":"your app name","run":"the file your app runs","doloop":"<true/false true disables wait for USR button press after app is finished>"}
-
+# controls
+press usr to switch apps on the menu and exit apps,
+touch the screen on menu to launch the app on the screen
