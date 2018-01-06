@@ -1,4 +1,5 @@
-
+# NOTE!
+IF YOU INSTALL THIS ON A PYBOARD, RENAME THE APPS DIRECTORY TO 'app'
 # pocketpy
 The pyphone is a pyboard smart device
 It requires a pyboard with a lcd160cr
