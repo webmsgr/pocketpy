@@ -2,6 +2,78 @@ import lcd160cr
 import pyb
 global lasty
 lasty = 0
+def waitforbutton():
+    d = False
+    while not d:
+        d = pyb.Switch().value()
+    while d:
+        d = pyb.Switch().value()
+def waitforlcd(lcd):
+    d = False
+    while not d:
+        d = lcd.is_touched()
+    while d:
+        d = lcd.is_touched()
+def waitforlcdorbutton(lcd):
+    d = False
+    while not d:
+        d = lcd.is_touched() or pyb.Switch().value()
+    while d:
+        d = lcd.is_touched() or pyb.Switch().value()
+def waitforlcdorbuttonnowait(lcd):
+    d = False
+    while not d:
+        d = lcd.is_touched() or pyb.Switch().value()
+
+def listfromletters(inp):
+    out = []
+    for letter in inp:
+        out.append(letter)
+    return out
+def listtotext(listto):
+    text = ""
+    for item in listto:
+        text += item
+    return text
+def userinput(prompt,lcd,letters="default",auto=None):
+    clear(lcd)
+    do = True
+    sel = 0
+    text = []
+    if (letters == "default"):
+        letters = listfromletters("abcdefghijklmnopqrstuvwxyz ")
+    letters.append("GO")
+    letters.append("<<")
+        
+    while do:
+        printlcd(lcd,0,"Press USR to switch letters",True)
+        printlcd(lcd,0,"Touch Screen to type letter")
+        printlcd(lcd,0,"letter:'"+letters[sel]+"'")
+        printlcd(lcd,0,prompt + listtotext(text))
+        waitforlcdorbuttonnowait(lcd)
+        if (lcd.is_touched()):
+            if (letters[sel] == "<<" or letters[sel] == "GO"):
+                if (letters[sel] == "<<"):
+                    if (not len(text) == 0):
+                        text.pop(len(text)-1)
+                else:
+                    do = False
+            else:
+                text.append(letters[sel])
+            d = True
+            while d:
+                d = lcd.is_touched()
+        else:
+            try:
+                tmp = letters[sel+1]
+                del tmp
+                sel += 1
+            except:
+                sel = 0
+            d = True
+            while d:
+                d = pyb.Switch().value()
+    return listtotext(text)
 def err(lcd,mes="???",):
     printlcd(lcd,0,"Hello Human",True)
     printlcd(lcd,0,"This is a error screen",False)
