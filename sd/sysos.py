@@ -86,17 +86,60 @@ def AppLoad(app_file):
         exec(code)           
 def blank():
     return ""
-    
+def settings(lcd,funcs):
+    return (lcd,funcs)
 def loginscreen(lcd,funcs,name="User"):
-    funcs.printlcd(lcd,0,"Welcome " + name,True)
-    funcs.printlcd(lcd,0,"Press USR",False)
-    funcs.waitforbutton()
+    usermsg = "Welcome " + name
+    listitems = {"Settings":settings,"App Menu":"return"}
+    sellist = ["App Menu"]
+    for item in listitems:
+        if (not item == "App Menu"):
+            sellist.append(item)
+    sel = 0
+    
+    do = True
+    while do:
+        count = 0
+        funcs.printlcd(lcd,0,usermsg,True)
+        for item in sellist:
+            if (count == sel):
+                funcs.printlcd(lcd,0,str(count+1)+") >"+item+"<",False)
+            else:
+                funcs.printlcd(lcd,0,str(count+1)+")"+item,False)
+            
+            count += 1
+        
+        funcs.waitforlcdorbuttonnowait(lcd)
+        if (lcd.is_touched()):
+            if (listitems[sellist[sel]] == "return"):
+                waitrelease(lcd)
+                
+                do = False
+                return
+            else:
+                listitems[sellist[sel]](lcd,funcs)
+        else:
+            try:
+                print(sellist[sel+1])
+                sel += 1
+            except:
+                sel = 0
+        waitrelease(lcd)
 def main(lcd,leimport):
     global funcs
     global banana
     funcs = leimport
+    try:
+        conf = open("name.conf",'r')
+        name = conf.read()
+        conf.close()
+    except:
+        r = open("os.conf","w")
+        r.write("User")
+        r.close()
+        name = "User"
     while True:
-        loginscreen(lcd,funcs)
+        loginscreen(lcd,funcs,name)
         while True:
             
             currentapp = appmenu(lcd,funcs)
