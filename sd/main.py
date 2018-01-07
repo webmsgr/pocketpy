@@ -2,6 +2,10 @@ import lcd160cr
 import pyb
 global lasty
 lasty = 0
+def waitrelease(lcd):
+    d = True
+    while d:
+        d = lcd.is_touched() or pyb.Switch().value()
 def waitforbutton():
     d = False
     while not d:

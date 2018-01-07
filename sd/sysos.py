@@ -2,7 +2,7 @@
 global funcs
 import pyb,os,json
 
-global banana
+global name
 #functions:
 #err(lcd,message) <- display a error message and continue
 #clear(lcd) <-clear lcd
@@ -87,7 +87,47 @@ def AppLoad(app_file):
 def blank():
     return ""
 def settings(lcd,funcs):
-    return (lcd,funcs)
+    global name
+    option = selectionlist(["Edit Name","Exit"],"Settings",funcs,lcd)
+    if (option == "Exit"):
+        return
+    if (option == "Edit Name"):
+        r = open("name.conf","w")
+        newname = funcs.userinput("New Name:",lcd)
+        r.write(newname)
+        r.close()
+        name = newnameb
+        return
+def selectionlist(items,name,funcs,lcd):
+    waitrelease(lcd)
+    do = True
+    sel = 0
+    t = 0
+    while do:
+        funcs.printlcd(lcd,0,name,True)
+        t = 0
+        
+        for item in items:
+            if (t == sel):
+                funcs.printlcd(lcd,0,str(t+1)+") >"+ item + "<")
+            else:
+                funcs.printlcd(lcd,0,str(t+1)+")"+item)
+            t += 1
+        
+        if (waitforbuttonorlcd(lcd)):
+            do = False
+            savesel = sel
+        else:
+            try:
+                print(items[sel+1])
+                sel += 1
+            except:
+                sel = 0
+        waitrelease(lcd)
+    d = lcd.get_touch()
+    
+    return items[savesel]
+    
 def loginscreen(lcd,funcs,name="User"):
     usermsg = "Welcome " + name
     listitems = {"Settings":settings,"App Menu":"return"}
@@ -125,10 +165,8 @@ def loginscreen(lcd,funcs,name="User"):
             except:
                 sel = 0
         waitrelease(lcd)
-def main(lcd,leimport):
-    global funcs
-    global banana
-    funcs = leimport
+def loadname():
+    global name
     try:
         conf = open("name.conf",'r')
         name = conf.read()
@@ -138,6 +176,11 @@ def main(lcd,leimport):
         r.write("User")
         r.close()
         name = "User"
+def main(lcd,leimport):
+    global funcs
+    global name
+    funcs = leimport
+    loadname()
     while True:
         loginscreen(lcd,funcs,name)
         while True:
