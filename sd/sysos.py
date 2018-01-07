@@ -28,6 +28,10 @@ def waitforbutton():
         d = pyb.Switch().value()
     while d:
         d = pyb.Switch().value()
+def waitrelease(lcd):
+    d = True
+    while d:
+        d = lcd.is_touched() or pyb.Switch().value()
 def appmenu(lcd,funcs):
     global banana
     try:
@@ -45,25 +49,33 @@ def appmenu(lcd,funcs):
         except:
             name = app
         appname[app] = name 
-        
+    applist.append("exit")
+    appname["exit"] = "Exit Menu"
     if (not len(applist) == 0):
         do = True
+        sel = 0
+        t = 0
         while do:
-            try:
-                funcs.printlcd(lcd,0,str(sel+1)+")"+appname[applist[sel]],True)
-            except:
-                sel = 0
+            funcs.printlcd(lcd,0,"App Menu",True)
+            t = 0
+            
+            for app in applist:
+                if (t == sel):
+                    funcs.printlcd(lcd,0,str(t+1)+") >"+appname[app] + "<")
+                else:
+                    funcs.printlcd(lcd,0,str(t+1)+")"+appname[app])
+                t += 1
+            
             if (waitforbuttonorlcd(lcd)):
                 do = False
                 savesel = sel
-            
-            d = pyb.Switch().value()
-            while d:
-                d = pyb.Switch().value()
-            if (not sel == len(applist)-1):
-                sel += 1
             else:
-                sel = 0
+                try:
+                    print(applist[sel+1])
+                    sel += 1
+                except:
+                    sel = 0
+            waitrelease(lcd)
         d = lcd.get_touch()
         
         return applist[savesel]
@@ -75,37 +87,44 @@ def AppLoad(app_file):
 def blank():
     return ""
     
-    
+def loginscreen(lcd,funcs,name="User"):
+    funcs.printlcd(lcd,0,"Welcome " + name,True)
+    funcs.printlcd(lcd,0,"Press USR",False)
+    funcs.waitforbutton()
 def main(lcd,leimport):
     global funcs
     global banana
     funcs = leimport
     while True:
-        currentapp = appmenu(lcd,funcs)
-
-        try:
-            r = open("\\app\\"+currentapp+"\\app.conf")
-            r = json.load(r)
-        except:
-            r = {
-                "run":"main.py"
-                }
-        
-        try:
-            clear("",funcs)
-            AppLoad("\\app\\"+currentapp+"\\"+r["run"])
+        loginscreen(lcd,funcs)
+        while True:
+            
+            currentapp = appmenu(lcd,funcs)
+            if (currentapp == "exit"):
+                break
             try:
-                dontwait = r["isloop"]
-                if (dontwait == "true"):
-                    dontwait = True
-                else:
-                    dontwait = False
+                r = open("\\app\\"+currentapp+"\\app.conf")
+                r = json.load(r)
             except:
-                dontwait = False
-            if (not dontwait):
-                waitforbutton()
-        except:
-            blank()
+                r = {
+                    "run":"app.py"
+                    }
+            
+            try:
+                clear("",funcs)
+                AppLoad("\\app\\"+currentapp+"\\"+r["run"])
+                try:
+                    dontwait = r["isloop"]
+                    if (dontwait == "true"):
+                        dontwait = True
+                    else:
+                        dontwait = False
+                except:
+                    dontwait = False
+                if (not dontwait):
+                    waitforbutton()
+            except:
+                blank()
             
         
     
