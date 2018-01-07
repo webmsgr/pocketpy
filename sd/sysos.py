@@ -47,8 +47,7 @@ def appmenu(lcd,funcs):
             r = json.loads(r.read())
             name = r["name"]
         except:
-            name = app
-        appname[app] = name 
+            name = app        appname[app] = name 
     applist.append("exit")
     appname["exit"] = "Exit Menu"
     if (not len(applist) == 0):
@@ -96,7 +95,7 @@ def settings(lcd,funcs):
         newname = funcs.userinput("New Name:",lcd)
         r.write(newname)
         r.close()
-        name = newnameb
+        name = newname
         return
 def selectionlist(items,name,funcs,lcd):
     waitrelease(lcd)
