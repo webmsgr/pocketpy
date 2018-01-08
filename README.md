@@ -1,5 +1,5 @@
-# NOTE!
-IF YOU INSTALL THIS ON A PYBOARD, RENAME THE APPS DIRECTORY TO 'app'
+ # NOTE!
+IF YOU INSTALL THIS ON A PYBOARD, RENAME THE APPS DIRECTORY TO 'app' (doesnt appy to the installer because the code will autocreate it when it dosent exist)
 # pocketpy
 The pyphone is a pyboard smart device
 It requires a pyboard with a lcd160cr
